@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="dark"><title>Urme</title><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#151618"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<style>
+:root{--bg:#151618;--p:#1d1f22;--p2:#26292d;--b:#34373c;--t:#e8e9eb;--m:#9a9ea6;--a:#8b9cf7;--fs:16px}
+*{box-sizing:border-box}
+body{margin:0;height:100dvh;display:flex;background:var(--bg);color:var(--t);font:15px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+button,.btn{background:var(--p2);border:1px solid var(--b);border-radius:9px;padding:6px 12px;cursor:pointer;text-decoration:none;display:inline-block;color:var(--t)}
+button:hover,.btn:hover{border-color:var(--a)}
+button.pr{background:var(--a);color:#111;border-color:var(--a);font-weight:600}
+button.dg{color:#f08a8a}button.ic{padding:3px 9px}
+input,select,textarea{background:var(--p);border:1px solid var(--b);border-radius:9px;padding:8px 10px;width:100%}
+label{display:block;margin:10px 0;color:var(--m);font-size:13px}label input,label select,label textarea{margin-top:4px;color:var(--t)}
+:focus-visible{outline:2px solid var(--a);outline-offset:1px}
+a{color:var(--a);text-decoration:none}a:hover{text-decoration:underline}
+h1{margin:.2em 0}h3{margin:18px 0 8px}small,.m{color:var(--m)}
+#sb{width:250px;background:var(--p);border-right:1px solid var(--b);padding:calc(16px + env(safe-area-inset-top,0px)) 16px 16px;overflow:auto;flex:none;transition:margin .2s}
+body.nosb #sb{margin-left:-250px}
+#sb h4{display:flex;justify-content:space-between;align-items:center;color:var(--m);font-size:12px;text-transform:uppercase;margin:20px 0 6px}
+.logo{margin:0 0 14px;font-size:20px}
+.nv{display:flex;gap:8px;align-items:center;padding:7px 10px;border-radius:9px;color:var(--t)!important}
+.nv:hover,.nv.on{background:var(--p2);text-decoration:none}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block;flex:none}
+#main{flex:1;overflow:auto;min-width:0}
+#top{display:flex;gap:8px;padding:calc(12px + env(safe-area-inset-top,0px)) 20px 12px;position:sticky;top:0;background:var(--bg);z-index:5;border-bottom:1px solid var(--b)}
+#view{max-width:980px;margin:0 auto;padding:24px 20px 90px;animation:f .25s}
+@keyframes f{from{opacity:0;transform:translateY(4px)}}
+.card{background:var(--p);border:1px solid var(--b);border-radius:14px;padding:14px 16px;margin:10px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}.grid .card{margin:0}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0}.row.end{justify-content:flex-end}.sp{flex:1}
+.lr{display:flex;gap:10px;align-items:center;flex-wrap:wrap;color:var(--t)!important}.lr:hover{border-color:var(--a);text-decoration:none}
+.tag{background:var(--p2);border:1px solid var(--b);border-radius:20px;padding:0 9px;font-size:12px;color:var(--a)}
+.empty{text-align:center;color:var(--m);padding:26px;border:1px dashed var(--b);border-radius:14px;margin:10px 0}
+.stat b{font-size:28px;display:block}
+.ttl{font-size:26px;font-weight:700;background:none;border:0;border-bottom:1px solid var(--b);border-radius:0;padding:6px 0;margin:6px 0}
+.tb{display:flex;gap:4px;flex-wrap:wrap;position:sticky;top:57px;background:var(--bg);padding:8px 0;z-index:4}
+.ed{min-height:90px;background:var(--p);border:1px solid var(--b);border-radius:12px;padding:12px 14px;outline:none;font-size:var(--fs);overflow-wrap:anywhere}
+.ed:focus{border-color:var(--a)}.ed:empty::before{content:attr(data-ph);color:var(--m)}
+#e-notes{min-height:260px}
+pre{background:#0f1012;padding:10px;border-radius:8px;overflow:auto;font-family:ui-monospace,Menlo,monospace}
+ul[data-cl]{list-style:none;padding-left:4px}
+li[data-c]::before{content:"☐ ";cursor:pointer}li[data-c="1"]::before{content:"☑ "}li[data-c="1"]{opacity:.6;text-decoration:line-through}
+.ro{border-left:3px solid var(--b);padding:2px 12px;font-size:var(--fs);overflow-wrap:anywhere}
+.st{font-size:13px;color:var(--m)}.st.err{color:#f08a8a}
+.att img{max-width:100%;max-height:360px;border-radius:8px;margin-top:8px;display:block}
+.att iframe{width:100%;height:420px;border:1px solid var(--b);border-radius:8px;margin-top:8px;background:#fff}
+dialog{background:var(--p);color:var(--t);border:1px solid var(--b);border-radius:16px;padding:20px;width:min(440px,92vw)}
+dialog::backdrop{background:#000a}
+#toast{position:fixed;bottom:20px;left:50%;transform:translate(-50%,30px);background:var(--p2);border:1px solid var(--b);padding:10px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90vw}
+#toast.show{opacity:1;transform:translate(-50%,0)}#toast.err{border-color:#f08a8a}
+body.focus #sb,body.focus #top{display:none}body.focus #view{max-width:760px}body.focus .tb{top:0}
+#menu{display:none}
+#tm{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:30;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+#tmp{width:min(300px,86vw);box-shadow:0 8px 30px #000a;margin:0}
+@media(max-width:800px){#sb{position:fixed;inset:0 auto 0 0;z-index:20;margin-left:-260px;width:250px}body.nosb #sb{margin-left:-260px}body.sbopen #sb{margin-left:0;box-shadow:0 0 0 100vmax #0008}}
+</style></head><body>
+<aside id="sb" aria-label="Sidebar"></aside>
+<div id="main"><header id="top"><button class="ic" data-a="menu" title="Toggle sidebar" aria-label="Toggle sidebar">☰</button><input id="q" type="search" placeholder="Search subjects, units, lectures, notes, tags…" aria-label="Global search"><button class="ic" data-a="clearQ" title="Clear search" aria-label="Clear search">✕</button></header><main id="view"></main></div>
+<div id="tm"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+/* ---------- helpers ---------- */
+const $=(s,e=document)=>e.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const col=c=>/^#[0-9a-f]{6}$/i.test(c)?c:'#8b9cf7';
+const uid=()=>crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2);
+const fd=t=>t?new Date(t).toLocaleString([],{dateStyle:'medium',timeStyle:'short'}):'—';
+const sz=b=>b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB';
+const txt=h=>new DOMParser().parseFromString(h||'','text/html').body.textContent;
+const by=a=>a.slice().sort((x,y)=>(x.order-y.order)||(x.created-y.created));
+const nxt=a=>a.reduce((m,x)=>Math.max(m,x.order),-1)+1;
+const V=$('#view');
+function toast(m,err){const t=$('#toast');t.textContent=m;t.className='show'+(err?' err':'');clearTimeout(toast.t);toast.t=setTimeout(()=>t.className='',err?6000:3000)}
+/* ---------- sanitizer (allow-list) ---------- */
+const OK=new Set('P,BR,B,STRONG,I,EM,U,UL,OL,LI,H1,H2,H3,H4,A,PRE,CODE,DIV,SPAN,BLOCKQUOTE'.split(','));
+const DROP=new Set('SCRIPT,STYLE,TEMPLATE,NOSCRIPT,IFRAME,OBJECT,EMBED,SVG,MATH,FORM,TEXTAREA,SELECT'.split(','));
+function clean(html){const d=new DOMParser().parseFromString(html||'','text/html');
+ (function w(n){[...n.childNodes].forEach(c=>{if(c.nodeType==3)return;if(c.nodeType!=1||DROP.has(c.tagName)){c.remove();return}
+  w(c);if(!OK.has(c.tagName)){c.replaceWith(...c.childNodes);return}
+  [...c.attributes].forEach(a=>{const k=a.name;if(c.tagName=='A'&&k=='href'&&/^(https?:|mailto:)/i.test(a.value))return;if(c.tagName=='LI'&&k=='data-c')return;if(c.tagName=='UL'&&k=='data-cl')return;c.removeAttribute(k)});
+  if(c.tagName=='A'){if(c.hasAttribute('href')){c.target='_blank';c.rel='noopener noreferrer'}}})})(d.body);
+ return d.body.innerHTML}
+/* ---------- IndexedDB ---------- */
+let db;
+const openDB=()=>new Promise((res,rej)=>{const r=indexedDB.open('urme',1);r.onupgradeneeded=()=>{const d=r.result;['subjects','units','lectures','settings'].forEach(n=>d.createObjectStore(n,{keyPath:'id'}));d.createObjectStore('files',{keyPath:'id'}).createIndex('lid','lid')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);r.onblocked=()=>rej(new Error('Database blocked'))});
+const rq=r=>new Promise((res,rej)=>{r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+const all=s=>rq(db.transaction(s).objectStore(s).getAll());
+const get=(s,id)=>rq(db.transaction(s).objectStore(s).get(id));
+const keys=s=>rq(db.transaction(s).objectStore(s).getAllKeys());
+const filesOf=lid=>rq(db.transaction('files').objectStore('files').index('lid').getAll(lid));
+const txDo=(stores,fn)=>new Promise((res,rej)=>{const t=db.transaction(stores,'readwrite');fn(t);t.oncomplete=()=>res();t.onerror=t.onabort=()=>rej(t.error||new Error('Transaction aborted'))});
+const put=(s,o)=>txDo(s,t=>t.objectStore(s).put(o));
+const del=(s,id)=>txDo(s,t=>t.objectStore(s).delete(id));
+/* ---------- state ---------- */
+let S={s:[],u:[],l:[]},P={id:'prefs'},TT={id:'tt',items:[]},HW={id:'hw',items:[]},LOG={id:'log',items:[]},cur=null,dirty=false,timer,urls=[];
+const R={s:'',u:'',o:'new'};
+const sub=id=>S.s.find(x=>x.id==id),unit=id=>S.u.find(x=>x.id==id),lec=id=>S.l.find(x=>x.id==id);
+const dleft=d=>{if(!/^\d{4}-\d\d-\d\d$/.test(d||''))return null;const t=new Date();t.setHours(0,0,0,0);return Math.round((new Date(d+'T00:00:00')-t)/864e5)};
+const exLbl=s=>{const n=dleft(s.exam);return n==null?'':n<0?'Exam passed':n==0?'Exam today!':n+(n==1?' day left':' days left')};
+const prog=s=>{const c=s.checklist||[];return c.length?c.filter(i=>i.d).length+'/'+c.length+' prepared':'No checklist yet'};
+const STARTER=['Review all lecture notes','Revise lectures marked for revision','Memorize key formulas and definitions','Clear all doubts','Solve past papers / practice questions','Check exam date, time and venue','Prepare ID / hall ticket and stationery','Sleep well the night before'];
+const exRow=s=>`<a class="card lr" href="#/subject/${s.id}"><span class="dot" style="background:${col(s.color)}"></span><b>${esc(s.icon)} ${esc(s.name)}</b><span class="tag"${dleft(s.exam)<=3?' style="color:#f08a8a"':''}>${exLbl(s)}</span><small>${prog(s)}</small></a>`;
+const ckCard=s=>{const c=s.checklist||[],n=dleft(s.exam),rv=S.l.filter(l=>l.sid==s.id&&l.rev).length;
+ return `<div class="card"><div class="row"><b>📝 Exam preparation</b>${s.exam&&n!=null?`<span class="tag"${n>=0&&n<=3?' style="color:#f08a8a"':''}>${new Date(s.exam+'T00:00:00').toLocaleDateString([],{dateStyle:'medium'})} · ${exLbl(s)}</span>`:'<small class="m">No exam date — use “Edit subject” to set one</small>'}<span class="sp"></span><small class="m">${prog(s)}</small></div>${rv?`<small class="m">⚠ ${rv} lecture(s) still marked for revision — <a href="#/revision">open revision</a></small>`:''}
+ ${c.map(i=>`<div class="row"><label style="display:flex;gap:8px;margin:0;color:var(--t);flex:1;cursor:pointer"><input type="checkbox" style="width:auto;margin:0" data-ck="${i.id}" data-s="${s.id}"${i.d?' checked':''}> <span${i.d?' style="text-decoration:line-through;opacity:.6"':''}>${esc(i.t)}</span></label><button class="ic dg" data-a="ckDel" data-id="${i.id}" data-s="${s.id}" aria-label="Remove item" title="Remove item">✕</button></div>`).join('')||'<div class="empty">Nothing on your checklist yet.</div>'}
+ <div class="row"><button data-a="ckAdd" data-id="${s.id}">+ Add item</button><button data-a="ckStarter" data-id="${s.id}">Add starter checklist</button></div></div>`};
+const DN=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const CRS={D:['Physical Metallurgy','MM1201'],C:['Metallurgical Thermodynamics','MM1203'],F:['Unit Processes in Extractive Metallurgy','MM1205'],A:['Transport Phenomena','MM1207'],G:['Electronic and Magnetic Materials','MM1209']};
+const SEED=[[1,'09:00','12:00','Lab 1'],[1,'13:00','13:55','F'],[1,'14:00','14:55','G'],[1,'15:00','15:55','C'],[1,'16:05','17:00','D'],[1,'18:05','19:00','I'],[2,'09:00','12:00','Lab 2'],[2,'13:00','13:55','F'],[2,'14:00','14:55','A'],[2,'15:00','15:55','G'],[2,'16:05','17:00','C'],[2,'18:05','19:00','I'],[3,'09:00','09:55','G'],[3,'10:00','10:55','C'],[3,'11:05','12:00','A'],[3,'12:05','13:00','D'],[3,'18:05','19:00','I'],[4,'11:05','12:00','C'],[4,'12:05','13:00','A'],[4,'14:00','17:00','Lab 3'],[4,'18:05','19:00','I'],[5,'10:00','10:55','D'],[5,'11:05','12:00','A'],[5,'12:05','13:00','F'],[5,'18:05','19:00','I']];
+const mkSeed=()=>SEED.map(([d,s,e,k])=>({id:uid(),d,s,e,t:CRS[k]?CRS[k][0]:(k=='I'?'Slot I':k),code:CRS[k]?CRS[k][1]:''}));
+const dueLbl=due=>{const n=dleft(due);return n==null?'No date':n<0?'Overdue by '+(-n)+'d':n==0?'Due today':n==1?'Due tomorrow':'Due in '+n+' days'};
+const hwRow=h=>{const n=dleft(h.due);return `<div class="card row"><label style="display:flex;gap:8px;margin:0;color:var(--t);flex:1;cursor:pointer"><input type="checkbox" style="width:auto;margin:0" data-hw="${h.id}"${h.done?' checked':''}><span${h.done?' style="text-decoration:line-through;opacity:.6"':''}>${esc(h.t)}</span></label><small class="m">${esc(sub(h.sid)?.name||'General')}</small><span class="tag"${!h.done&&n!=null&&n<0?' style="color:#f08a8a"':''}>${dueLbl(h.due)}</span><button class="ic dg" data-a="hwDel" data-id="${h.id}" aria-label="Delete homework" title="Delete homework">🗑</button></div>`};
+const todayPanel=()=>{const t=new Date().getDay(),n=(t+1)%7,L=k=>TT.items.filter(i=>i.d==k).sort((a,b)=>a.s<b.s?-1:1).map(i=>`<div class="row" style="margin:2px 0"><small class="m" style="min-width:104px">${esc(i.s)}–${esc(i.e)}</small><span>${esc(i.t)}</span><small class="m">${esc(i.code)}</small></div>`).join('')||'<small class="m">No classes</small>',hw=HW.items.filter(h=>!h.done&&dleft(h.due)!=null&&dleft(h.due)<=2).sort((a,b)=>a.due<b.due?-1:1);
+ return `<h3>Today &amp; tomorrow</h3><div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))"><div class="card"><b>Today · ${DN[t]}</b>${L(t)}</div><div class="card"><b>Tomorrow · ${DN[n]}</b>${L(n)}</div></div>`+section('Homework due soon',hw.map(hwRow),'Nothing due in the next 2 days. <a href="#/homework">Add homework</a>')};
+async function saveFile(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+const views={},acts={};
+const fmt=s=>{const m=Math.round(s/60);return m<60?m+' min':Math.floor(m/60)+' h '+(m%60)+' min'};
+const studyPanel=()=>{const d0=new Date();d0.setHours(0,0,0,0);const day=d0.getTime(),wk=day-((d0.getDay()+6)%7)*864e5,sum=f=>LOG.items.filter(f).reduce((a,x)=>a+(+x.sec||0),0),per={};
+ LOG.items.filter(x=>(+x.start||0)>=wk).forEach(x=>per[x.sid||'']=(per[x.sid||'']||0)+(+x.sec||0));const mx=Math.max(1,...Object.values(per));
+ const rows=Object.entries(per).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="row"><span style="min-width:140px">${esc(sub(k)?.name||'General')}</span><div style="flex:1;min-width:60px;background:var(--p2);border-radius:6px;height:8px"><div style="width:${Math.round(v/mx*100)}%;background:var(--a);height:8px;border-radius:6px"></div></div><small class="m">${fmt(v)}</small></div>`).join('');
+ return `<h3>Study time</h3><div class="grid"><div class="card stat"><b>${fmt(sum(x=>(+x.start||0)>=day))}</b>Today</div><div class="card stat"><b>${fmt(sum(x=>(+x.start||0)>=wk))}</b>This week</div></div>${rows?`<div class="card"><small class="m">This week by subject</small>${rows}</div>`:'<div class="empty">Start the ⏱ timer (bottom right) to log your study time.</div>'}`};
+let TM=(()=>{try{return JSON.parse(localStorage.getItem('urme-tm'))}catch(e){return null}})()||{mode:'pomo',phase:'focus',run:false,t0:0,acc:0,sid:'',lid:''};
+if(TM.run&&Date.now()-TM.t0>432e5){TM.run=false;TM.acc=0}
+const tmSave=()=>{try{localStorage.setItem('urme-tm',JSON.stringify(TM))}catch(e){}};
+const tmEl=()=>TM.acc+(TM.run?Date.now()-TM.t0:0);
+const tmTarget=()=>TM.mode=='pomo'?(TM.phase=='focus'?(+P.focus||25):(+P.brk||5))*60000:0;
+const clk=ms=>{const s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return (h?h+':'+String(m).padStart(2,'0'):String(m).padStart(2,'0'))+':'+String(s%60).padStart(2,'0')};
+const tmTxt=()=>{const tg=tmTarget(),el=tmEl();return clk(tg?Math.max(0,tg-el):el)};
+function beep(){try{const c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=880;g.gain.value=.15;o.start();o.stop(c.currentTime+.6)}catch(e){}}
+function notify(m){toast(m);beep();try{if('Notification'in window&&Notification.permission=='granted')new Notification('Urme',{body:m})}catch(e){}}
+async function tmLog(ms){const sec=Math.round(ms/1000);if(sec<30)return false;LOG.items.push({id:uid(),sid:TM.sid||'',lid:TM.lid||'',start:Date.now()-ms,sec,mode:TM.mode});try{await put('settings',LOG);return true}catch(e){toast('Could not save study session',1);return false}}
+const onHome=()=>!location.hash||location.hash=='#/';
+function tmRender(){const root=$('#tm');if(!root)return;
+ root.innerHTML=`<button id="tmb" class="pr" data-a="tmToggle" aria-label="Study timer" title="Study timer">⏱ <span id="tmt">${TM.run||TM.acc?tmTxt():'Timer'}</span></button>`+(TM.open?`<div class="card" id="tmp" role="dialog" aria-label="Study timer"><div class="row"><button data-a="tmMode" data-m="pomo" class="${TM.mode=='pomo'?'pr':''}">Pomodoro</button><button data-a="tmMode" data-m="stop" class="${TM.mode=='stop'?'pr':''}">Stopwatch</button></div><div id="tmbig" style="font-size:44px;font-weight:700;text-align:center">${tmTxt()}</div><div class="m" style="text-align:center">${TM.mode=='pomo'?(TM.phase=='focus'?'Focus':'Break'):'Reading'}</div><label>Subject<select data-tms><option value="">General</option>${by(S.s).map(s=>`<option value="${s.id}"${s.id==TM.sid?' selected':''}>${esc(s.name)}</option>`).join('')}</select></label><div class="row"><button class="pr" data-a="tmGo" style="flex:1">${TM.run?'Pause':(TM.acc?'Resume':'Start')}</button><button data-a="tmStop">Stop &amp; save</button></div></div>`:'')}
+acts.tmToggle=()=>{TM.open=!TM.open;tmSave();tmRender()};
+acts.tmMode=d=>{if(TM.run||TM.acc)return toast('Stop the current session first');TM.mode=d.m;TM.phase='focus';tmSave();tmRender()};
+acts.tmGo=()=>{if(TM.run){TM.acc=tmEl();TM.run=false}else{TM.t0=Date.now();TM.run=true;try{if('Notification'in window&&Notification.permission=='default')Notification.requestPermission()}catch(e){}}tmSave();tmRender()};
+acts.tmStop=async()=>{const el=tmEl(),was=TM.phase=='focus';TM.run=false;TM.acc=0;TM.phase='focus';tmSave();tmRender();if(was&&await tmLog(el))toast('Session saved: '+fmt(el/1000));if(onHome())views.home()};
+document.addEventListener('change',e=>{if(e.target.dataset&&e.target.dataset.tms!==undefined){TM.sid=e.target.value;TM.lid='';tmSave()}});
+setInterval(async()=>{if(!TM.run)return;const el=tmEl(),tg=tmTarget();
+ if(tg&&el>=tg){TM.run=false;TM.acc=0;if(TM.phase=='focus'){await tmLog(tg);TM.phase='break';TM.t0=Date.now();TM.run=true;notify('Focus session done. Take a break!')}else{TM.phase='focus';notify('Break over. Ready for the next session.')}tmSave();tmRender();if(onHome())views.home();return}
+ const txt=tmTxt(),t=$('#tmt'),b=$('#tmbig');if(t)t.textContent=txt;if(b)b.textContent=txt},500);
+const crumb=l=>`${esc(sub(l.sid)?.name)} › ${esc(unit(l.uid)?.name)}`;
+async function load(){[S.s,S.u,S.l]=await Promise.all(['subjects','units','lectures'].map(all));P=(await get('settings','prefs'))||{id:'prefs'};TT=(await get('settings','tt'))||{id:'tt',items:mkSeed()};if(!Array.isArray(TT.items))TT.items=[];HW=(await get('settings','hw'))||{id:'hw',items:[]};if(!Array.isArray(HW.items))HW.items=[];LOG=(await get('settings','log'))||{id:'log',items:[]};if(!Array.isArray(LOG.items))LOG.items=[];applyP()}
+function applyP(){const r=document.documentElement.style;r.setProperty('--a',col(P.accent||'#8b9cf7'));r.setProperty('--fs',P.fs||'16px')}
+/* ---------- dialogs ---------- */
+function ask(title,fields=[],ok='Save',danger){return new Promise(res=>{const d=document.createElement('dialog');
+ d.innerHTML=`<form method="dialog"><h3 style="margin-top:0">${esc(title)}</h3>${fields.map(f=>f.t=='p'?`<p>${esc(f.v)}</p>`:`<label>${esc(f.l)}${f.t=='ta'?`<textarea name="${f.n}" rows="3">${esc(f.v)}</textarea>`:f.t=='sel'?`<select name="${f.n}">${f.o.map(o=>`<option value="${esc(o[0])}"${o[0]==f.v?' selected':''}>${esc(o[1])}</option>`).join('')}</select>`:`<input type="${f.type||'text'}" name="${f.n}" value="${esc(f.v)}"${f.req?' required':''} autocomplete="off">`}</label>`).join('')}<div class="row end"><button value="c" formnovalidate>Cancel</button><button value="ok" class="${danger?'dg':'pr'}">${esc(ok)}</button></div></form>`;
+ document.body.append(d);const fm=d.firstChild;d.onclose=()=>{res(d.returnValue=='ok'?Object.fromEntries(new FormData(fm)):null);d.remove()};d.showModal()})}
+const conf=(m,ok='Delete')=>ask('Are you sure?',[{t:'p',v:m}],ok,true);
+const COLORS=[['#8b9cf7','Indigo'],['#5fc9a4','Green'],['#e8a86b','Amber'],['#e57d8b','Rose'],['#6bb8e8','Sky'],['#b78be8','Violet']];
+const ICONS=[['','No icon'],['📘','📘 Book'],['🧪','🧪 Science'],['🧮','🧮 Maths'],['💻','💻 Computing'],['🌍','🌍 World'],['⚖️','⚖️ Law'],['🎨','🎨 Art'],['🩺','🩺 Medicine'],['📊','📊 Data']];
+const SF=(s={})=>[{n:'name',l:'Name',v:s.name,req:1},{n:'desc',l:'Description (optional)',t:'ta',v:s.desc},{n:'color',l:'Color',t:'sel',o:COLORS,v:s.color},{n:'icon',l:'Icon',t:'sel',o:ICONS,v:s.icon},{n:'exam',l:'Exam date (optional)',type:'date',v:s.exam}];
+const go=h=>location.hash==h?route():(location.hash=h);
+/* ---------- autosave ---------- */
+function setSt(m,err){const s=$('#st');if(s){s.textContent=m;s.className='st'+(err?' err':'')}}
+function startCur(store,obj,collect){cur={store,obj,collect,hash:location.hash};dirty=false}
+function touch(){if(!cur)return;dirty=true;setSt('Saving…');clearTimeout(timer);timer=setTimeout(flush,700)}
+async function flush(){clearTimeout(timer);if(!cur||!dirty)return;const c=cur;
+ try{document.querySelectorAll('ul[data-cl] li:not([data-c])').forEach(li=>li.setAttribute('data-c','0'));c.collect(c.obj);c.obj.updated=Date.now();await put(c.store,c.obj);dirty=false;setSt('Saved ✓');const m=$('#md');if(m)m.textContent=fd(c.obj.updated)}
+ catch(e){console.error(e);setSt('Save failed — keep this page open and edit again to retry',1);toast('Save failed: '+(e.message||e),1)}}
+addEventListener('beforeunload',e=>{if(dirty){flush();e.preventDefault();e.returnValue=''}});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)flush()});
+/* ---------- router ---------- */
+const nf=()=>{V.innerHTML='<div class="empty">Not found. <a href="#/">Go to dashboard</a></div>'};
+async function route(){
+ await flush();if(dirty){location.hash=cur.hash;toast('Could not save — staying on this page so nothing is lost',1);return}
+ urls.forEach(URL.revokeObjectURL);urls=[];cur=null;document.body.classList.remove('focus','sbopen');
+ try{await load();side();const[p,...r]=location.hash.slice(2).split('/');await(views[p||'home']||nf)(decodeURIComponent(r.join('/')))}
+ catch(e){console.error(e);V.innerHTML=`<div class="empty">Something went wrong: ${esc(e.message)}</div>`}
+ $('#main').scrollTo(0,0)}
+function side(){tmRender();const h=location.hash||'#/';const on=x=>h==x?' on':'';
+ $('#sb').innerHTML=`<h2 class="logo">◐ Urme</h2><a class="nv${on('#/')}" href="#/">🏠 Dashboard</a><a class="nv${on('#/revision')}" href="#/revision">🔁 Revision ${S.l.filter(l=>l.rev).length||''}</a><a class="nv${on('#/timetable')}" href="#/timetable">📅 Timetable</a><a class="nv${on('#/homework')}" href="#/homework">✅ Homework ${HW.items.filter(h=>!h.done).length||''}</a><a class="nv${on('#/settings')}" href="#/settings">⚙️ Settings</a><h4>Subjects <button class="ic" data-a="newSub" title="Create subject" aria-label="Create subject">+</button></h4>`+
+ (by(S.s).map(s=>`<a class="nv${on('#/subject/'+s.id)}" href="#/subject/${s.id}"><span class="dot" style="background:${col(s.color)}"></span>${esc(s.name)}${s.exam&&dleft(s.exam)>=0?`<small style="margin-left:auto">${dleft(s.exam)}d</small>`:''}</a>`).join('')||'<small>No subjects yet</small>')+'<p><small>🔒 Your notes stay on this device. Urme does not upload your data.</small></p>'}
+const lrow=l=>`<a class="card lr" href="#/lecture/${l.id}"><span class="dot" style="background:${col(sub(l.sid)?.color)}"></span><b>${esc(l.title)}</b><small>${crumb(l)} · ${fd(l.updated)}</small>${l.rev?'<span class="tag">Revision</span>':''}</a>`;
+const section=(t,items,e)=>`<h3>${t}</h3>${items.length?items.join(''):`<div class="empty">${e}</div>`}`;
+/* ---------- dashboard ---------- */
+views.home=()=>{const h=new Date().getHours(),g=h<12?'Good morning':h<18?'Good afternoon':'Good evening';
+ const ex=S.s.filter(s=>dleft(s.exam)>=0).sort((a,b)=>a.exam<b.exam?-1:1);const rec=S.l.filter(l=>l.opened).sort((a,b)=>b.opened-a.opened).slice(0,4),upd=S.l.slice().sort((a,b)=>b.updated-a.updated).slice(0,5),rv=S.l.filter(l=>l.rev).slice(0,4);
+ V.innerHTML=`<h1>${g}</h1><p class="m">${new Date().toLocaleDateString([],{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</p>
+ <div class="row"><button class="pr" data-a="newSub">+ Create Subject</button><button data-a="newUnit">+ Create Unit</button><button data-a="newLec">+ New Lecture</button><button data-a="focusSearch">🔍 Search</button></div>
+ <h3>Study overview</h3><div class="grid"><div class="card stat"><b>${S.s.length}</b>Subjects</div><div class="card stat"><b>${S.u.length}</b>Units</div><div class="card stat"><b>${S.l.length}</b>Lectures</div></div>
+ ${todayPanel()}
+ ${studyPanel()}
+ ${section('Upcoming exams',ex.map(exRow),'Set an exam date on a subject to see a countdown and checklist progress here.')}
+ ${section('Continue studying',rec.map(lrow),'Lectures you open will appear here.')}
+ <h3>My subjects</h3>${S.s.length?`<div class="grid">${by(S.s).map(s=>`<a class="card" style="border-left:4px solid ${col(s.color)};color:var(--t)" href="#/subject/${s.id}"><b>${esc(s.icon)} ${esc(s.name)}</b><br><small>${S.u.filter(u=>u.sid==s.id).length} units · ${S.l.filter(l=>l.sid==s.id).length} lectures</small>${dleft(s.exam)>=0?'<br><small class="tag">'+exLbl(s)+'</small>':''}</a>`).join('')}</div>`:'<div class="empty">No subjects yet. Create your first subject to begin.</div>'}
+ ${section('Recently updated notes',upd.map(lrow),'No notes yet.')}
+ ${section('Marked for revision',rv.map(lrow),'Nothing marked for revision.')}`};
+/* ---------- subject page ---------- */
+views.subject=id=>{const s=sub(id);if(!s)return nf();const us=by(S.u.filter(u=>u.sid==id));
+ const mvb=(k,i,n)=>`<button class="ic" data-a="mv" data-k="${k}" data-id="${i}" data-d="-1" title="Move up" aria-label="Move up">↑</button><button class="ic" data-a="mv" data-k="${k}" data-id="${i}" data-d="1" title="Move down" aria-label="Move down">↓</button>`;
+ V.innerHTML=`<p class="m"><a href="#/">Home</a> › ${esc(s.name)}</p><h1><span class="dot" style="background:${col(s.color)}"></span> ${esc(s.icon)} ${esc(s.name)}</h1><p class="m">${esc(s.desc)}</p>
+ <div class="row"><button class="pr" data-a="newUnit" data-id="${id}">+ Unit</button><button data-a="editSub" data-id="${id}">✎ Edit subject</button><button class="dg" data-a="delSub" data-id="${id}">Delete subject</button></div>
+ ${ckCard(s)}
+ ${us.length?us.map(u=>{const ls=by(S.l.filter(l=>l.uid==u.id));return `<div class="card"><div class="row"><b>📂 <a href="#/unit/${u.id}" title="Open unit notebook">${esc(u.name)}</a></b><small>${ls.length} lectures</small><span class="sp"></span>${mvb('u',u.id)}<button class="ic" data-a="renUnit" data-id="${u.id}" title="Rename unit" aria-label="Rename unit">✎</button><button class="ic dg" data-a="delUnit" data-id="${u.id}" title="Delete unit" aria-label="Delete unit">🗑</button></div><small class="m">${esc(u.desc)}</small>
+ ${ls.map(l=>`<div class="row"><a href="#/lecture/${l.id}">📄 ${esc(l.title)}</a>${l.rev?'<span class="tag">Revision</span>':''}<span class="sp"></span>${mvb('l',l.id)}<button class="ic" data-a="renLec" data-id="${l.id}" title="Rename lecture" aria-label="Rename lecture">✎</button><button class="ic dg" data-a="delLec" data-id="${l.id}" title="Delete lecture" aria-label="Delete lecture">🗑</button></div>`).join('')}
+ <button data-a="newLec" data-id="${u.id}">+ Lecture</button></div>`}).join(''):'<div class="empty">No units yet. Add a unit to start adding lectures.</div>'}`};
+/* ---------- editor toolbar ---------- */
+const TB='<div class="tb">'+[['bold','<b>B</b>','Bold'],['italic','<i>I</i>','Italic'],['underline','<u>U</u>','Underline'],['formatBlock:h2','H2','Heading'],['formatBlock:h3','H3','Subheading'],['formatBlock:p','¶','Paragraph'],['insertUnorderedList','• List','Bullet list'],['insertOrderedList','1. List','Numbered list'],['cl','☑ Tasks','Checklist'],['link','🔗','Link'],['formatBlock:pre','&lt;/&gt;','Code block'],['undo','↶','Undo'],['redo','↷','Redo']].map(([c,l,t])=>`<button class="ic" data-a="cmd" data-c="${c}" title="${t}" aria-label="${t}">${l}</button>`).join('')+'</div>';
+const F=[['personal','Personal notes'],['concepts','Key concepts'],['formulas','Formulas'],['doubts','Doubts'],['questions','Important questions']];
+const edBox=(id,ph,html)=>{const e=$('#'+id);e.dataset.ph=ph;e.innerHTML=clean(html)};
+/* ---------- lecture workspace ---------- */
+views.lecture=async id=>{const l=lec(id);if(!l)return nf();const s=sub(l.sid),u=unit(l.uid);l.opened=Date.now();put('lectures',l).catch(()=>{});
+ V.innerHTML=`<div class="row"><small class="m"><a href="#/subject/${l.sid}">${esc(s.name)}</a> › <a href="#/unit/${l.uid}">${esc(u.name)}</a> › ${esc(l.title)}</small><span class="sp"></span><span id="st" class="st"></span><button data-a="focus" title="Focus mode (Esc to exit)">⤢ Focus</button></div>
+ <input id="ti" class="ttl" value="${esc(l.title)}" aria-label="Lecture title">
+ <div class="row"><input id="tg" style="flex:1;min-width:180px" placeholder="Tags, comma separated" value="${esc(l.tags.join(', '))}" aria-label="Tags"><button id="rv" data-a="togRev" class="${l.rev?'pr':''}">${l.rev?'★ Marked for revision':'☆ Mark for revision'}</button></div>
+ <small class="m">Created ${fd(l.created)} · Modified <span id="md">${fd(l.updated)}</span></small>${TB}
+ <h3 style="margin-top:4px">Notes</h3><div class="ed" id="e-notes" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Lecture notes"></div>
+ ${F.map(([k,t])=>`<h3>${t}</h3><div class="ed" id="e-${k}" contenteditable="true" role="textbox" aria-multiline="true" aria-label="${t}"></div>`).join('')}
+ <h3>Attachments</h3><div id="att" class="att"></div>`;
+ edBox('e-notes','Start writing…',l.notes);F.forEach(([k,t])=>edBox('e-'+k,t+'…',l[k]));
+ startCur('lectures',l,o=>{o.title=$('#ti').value.trim()||'Untitled';o.tags=$('#tg').value.split(',').map(x=>x.trim()).filter(Boolean);['notes',...F.map(f=>f[0])].forEach(k=>o[k]=clean($('#e-'+k).innerHTML))});
+ setSt('Saved ✓');if(!TM.run&&!TM.acc){TM.sid=l.sid;TM.lid=l.id;tmSave()}tmRender();await renderAtt(id)};
+async function renderAtt(lid){const fs=await filesOf(lid);urls.forEach(URL.revokeObjectURL);urls=[];const el=$('#att');if(!el)return;
+ el.innerHTML=`<input type="file" id="fi" multiple hidden><button data-a="addFile">+ Add files</button> <small class="m">Stored in this browser only. Images and PDFs preview here; other types (e.g. PPT/PPTX) can only be downloaded or opened in another app.</small>`+
+ (fs.length?fs.map(f=>{const u=URL.createObjectURL(f.blob);urls.push(u);const img=f.type.startsWith('image/'),pdf=f.type=='application/pdf';
+ return `<div class="card"><div class="row"><b>${esc(f.name)}</b><small>${sz(f.size)} · ${esc(f.type||'unknown type')}</small><span class="sp"></span><button data-a="dlFile" data-id="${f.id}">Download</button><button class="dg" data-a="rmFile" data-id="${f.id}">Remove</button></div>${img?`<img src="${u}" alt="${esc(f.name)}">`:pdf?`<iframe src="${u}" title="${esc(f.name)}"></iframe><small class="m">If the PDF doesn't display in your browser, use Download.</small>`:'<small class="m">No in-app preview for this file type. Use Download and open it in a suitable app.</small>'}</div>`}).join(''):'<div class="empty">No attachments yet.</div>')}
+/* ---------- unit notebook ---------- */
+const UF=[['summary','Unit summary'],['revnotes','Revision notes'],['questions','Important questions']];
+views.unit=id=>{const u=unit(id);if(!u)return nf();const s=sub(u.sid),ls=by(S.l.filter(l=>l.uid==id));
+ V.innerHTML=`<div class="row"><small class="m"><a href="#/subject/${u.sid}">${esc(s.name)}</a> › ${esc(u.name)}</small><span class="sp"></span><span id="st" class="st"></span></div><h1>📂 ${esc(u.name)} — Notebook</h1><p class="m">${esc(u.desc)}</p>
+ <div class="card"><b>Unit-level notes (yours, saved with the unit)</b>${TB}${UF.map(([k,t])=>`<h3 style="margin-top:4px">${t}</h3><div class="ed" id="u-${k}" contenteditable="true" role="textbox" aria-multiline="true" aria-label="${t}"></div>`).join('')}</div>
+ <h2>Lecture content <small class="m">— read-only view generated from your lectures</small></h2>
+ ${ls.length?ls.map((l,i)=>{const blk=(k,t)=>txt(l[k]).trim()?`<h4>${t}</h4><div class="ro">${clean(l[k])}</div>`:'';return `<div class="card"><h3 style="margin:0">${i+1}. <a href="#/lecture/${l.id}">${esc(l.title)}</a> <small>Open original →</small></h3>${blk('notes','Notes')||'<p class="m"><i>No notes yet.</i></p>'}${blk('concepts','Key concepts')}${blk('formulas','Formulas')}${blk('personal','Personal notes')}${blk('questions','Important questions')}</div>`}).join(''):'<div class="empty">This unit has no lectures yet.</div>'}`;
+ UF.forEach(([k,t])=>edBox('u-'+k,t+'…',u[k]));startCur('units',u,o=>UF.forEach(([k])=>o[k]=clean($('#u-'+k).innerHTML)));setSt('Saved ✓')};
+/* ---------- search ---------- */
+views.search=q=>{if(document.activeElement!==$('#q'))$('#q').value=q;const ts=q.toLowerCase().split(/\s+/).filter(Boolean);
+ if(!ts.length){V.innerHTML='<div class="empty">Type in the search box to search subjects, units, lectures, notes and tags.</div>';return}
+ const hit=h=>ts.every(t=>h.toLowerCase().includes(t));
+ const ss=S.s.filter(s=>hit(s.name+' '+s.desc)),us=S.u.filter(u=>hit(u.name+' '+u.desc));
+ const ls=S.l.map(l=>{const t=[l.notes,l.personal,l.concepts,l.formulas,l.doubts,l.questions].map(txt).join(' ');return{l,t,h:l.title+' '+l.tags.join(' ')+' '+t}}).filter(x=>hit(x.h));
+ const snip=t=>{const i=t.toLowerCase().indexOf(ts[0]);if(i<0)return'';const a=Math.max(0,i-50);return (a?'…':'')+t.slice(a,a+150)+'…'};
+ const n=ss.length+us.length+ls.length;
+ V.innerHTML=`<div class="row"><h1>Results for “${esc(q)}”</h1><span class="sp"></span><button data-a="clearQ">Clear search</button></div>`+(n?
+ ss.map(s=>`<a class="card lr" href="#/subject/${s.id}">${esc(s.icon)} <b>${esc(s.name)}</b><small>Subject</small></a>`).join('')+
+ us.map(u=>`<a class="card lr" href="#/unit/${u.id}">📂 <b>${esc(u.name)}</b><small>Unit · ${esc(sub(u.sid)?.name)}</small></a>`).join('')+
+ ls.map(x=>`<a class="card" style="display:block;color:var(--t)" href="#/lecture/${x.l.id}"><b>📄 ${esc(x.l.title)}</b> <small>${crumb(x.l)}</small>${x.l.tags.map(t=>`<span class="tag">${esc(t)}</span> `).join('')}<br><small class="m">${esc(snip(x.t))}</small></a>`).join(''):'<div class="empty">No results found. Try different words or <a href="#/" data-a="clearQ">clear the search</a>.</div>')};
+/* ---------- revision ---------- */
+views.revision=()=>{let ls=S.l.filter(l=>l.rev&&(!R.s||l.sid==R.s)&&(!R.u||l.uid==R.u));ls.sort((a,b)=>R.o=='old'?a.updated-b.updated:b.updated-a.updated);
+ const opt=(a,v,n)=>`<option value="">${n}</option>`+a.map(x=>`<option value="${x.id}"${x.id==v?' selected':''}>${esc(x.name)}</option>`).join('');
+ const blk=(k,t,l)=>txt(l[k]).trim()?`<h4>${t}</h4><div class="ro">${clean(l[k])}</div>`:'';
+ V.innerHTML=`<h1>Revision center</h1><div class="row"><select data-rf="s" style="width:auto" aria-label="Filter by subject">${opt(S.s,R.s,'All subjects')}</select><select data-rf="u" style="width:auto" aria-label="Filter by unit">${opt(S.u.filter(u=>!R.s||u.sid==R.s),R.u,'All units')}</select><select data-rf="o" style="width:auto" aria-label="Sort"><option value="new">Recently updated</option><option value="old"${R.o=='old'?' selected':''}>Oldest first</option></select></div>
+ ${ls.length?ls.map(l=>{const od=l.nextRev&&l.nextRev<new Date().toISOString().slice(0,10);return `<div class="card"><div class="row"><a href="#/lecture/${l.id}"><b>${esc(l.title)}</b></a><small>${crumb(l)}</small>${od?'<span class="tag" style="color:#f08a8a">Overdue</span>':''}<span class="sp"></span><label style="margin:0">Next revision <input type="date" data-nr="${l.id}" value="${esc(l.nextRev)}" style="width:auto"></label><button class="pr" data-a="revised" data-id="${l.id}">✓ Mark revised</button></div>${l.lastRevised?`<small class="m">Last revised ${fd(l.lastRevised)}</small>`:''}<details><summary>Quick view</summary>${blk('concepts','Key concepts',l)+blk('formulas','Formulas',l)+blk('questions','Important questions',l)||'<p class="m">No key concepts, formulas or questions written yet.</p>'}</details></div>`}).join(''):'<div class="empty">No lectures to revise. Use “Mark for revision” inside a lecture.</div>'}`};
+/* ---------- settings & backup ---------- */
+views.settings=async()=>{const o=(a,v)=>a.map(x=>`<option value="${x[0]}"${x[0]==v?' selected':''}>${x[1]}</option>`).join('');
+ V.innerHTML=`<h1>Settings</h1>
+ <div class="card"><h3 style="margin-top:0">Appearance &amp; editor</h3><label>Accent color<select data-p="accent">${o(COLORS,P.accent||'#8b9cf7')}</select></label><label>Editor font size<select data-p="fs">${o([['14px','Small'],['16px','Medium'],['18px','Large'],['20px','Extra large']],P.fs||'16px')}</select></label><label>Pomodoro focus session (minutes)<select data-p="focus">${o([['15','15'],['25','25'],['30','30'],['45','45'],['50','50']],P.focus||'25')}</select></label><label>Pomodoro break (minutes)<select data-p="brk">${o([['5','5'],['10','10'],['15','15']],P.brk||'5')}</select></label></div>
+ <div class="card"><h3 style="margin-top:0">Backup &amp; restore</h3><p class="m">Browsers can clear site storage (low disk space, “clear site data”, private mode). Export a backup regularly and keep it somewhere safe.</p><div class="row"><button class="pr" data-a="exportB">Export backup</button><button data-a="importPick">Import backup</button><input type="file" id="bi" accept=".json,application/json" hidden></div><small class="m">Import never overwrites existing items: only items with new IDs are added, after a preview.</small></div>
+ <div class="card"><h3 style="margin-top:0">Storage</h3><p id="su" class="m">Checking…</p><button data-a="persist">Request persistent storage</button></div>
+ <div class="card"><h3 style="margin-top:0">Danger zone</h3><button class="dg" data-a="clearAll">Clear all data</button></div>
+ <div class="card"><h3 style="margin-top:0">About</h3><p>Urme v1.0 — offline study notes.<br>Your notes stay on this device. Urme does not upload your data.</p></div>`;
+ if(navigator.storage?.estimate){const e=await navigator.storage.estimate();$('#su').textContent=`Using about ${sz(e.usage||0)} of ~${sz(e.quota||0)} available (browser estimate).`}else $('#su').textContent='Storage estimate not supported by this browser.'};
+const b64=b=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>rej(r.error);r.readAsDataURL(b)});
+acts.exportB=async()=>{try{toast('Preparing backup…');const fl=await all('files'),files=[];for(const f of fl)files.push({id:f.id,lid:f.lid,name:f.name,type:f.type,size:f.size,data:await b64(f.blob)});
+ const data={format:'urme-backup',version:1,exported:new Date().toISOString(),subjects:S.s,units:S.u,lectures:S.l,files,settings:(await all('settings')).filter(x=>x.id=='tt'||x.id=='hw'||x.id=='log')};const blob=new Blob([JSON.stringify(data)],{type:'application/json'});if(!blob.size)throw new Error('Backup is empty');
+ await saveFile('urme-backup-'+new Date().toISOString().slice(0,10)+'.json',blob);
+ toast(`Backup saved (${S.l.length} lectures, ${files.length} files, ${sz(blob.size)}).`)}catch(e){toast('Backup failed: '+e.message,1)}};
+acts.importPick=()=>$('#bi').click();
+async function importB(file){try{const d=JSON.parse(await file.text());const K=['subjects','units','lectures','files'];
+ if(d.format!='urme-backup'||!K.every(k=>Array.isArray(d[k])))throw new Error('This is not a valid Urme backup file');
+ if(!K.every(k=>d[k].every(x=>x&&typeof x.id=='string')))throw new Error('Backup contains invalid items');
+ if(!d.files.every(f=>typeof f.data=='string'&&f.data.startsWith('data:')&&typeof f.lid=='string'))throw new Error('Backup contains invalid attachments');
+ const ex={};for(const k of K)ex[k]=new Set(await keys(k));const nw={};let skipped=0;for(const k of K){nw[k]=d[k].filter(x=>!ex[k].has(x.id));skipped+=d[k].length-nw[k].length}
+ if(!K.some(k=>nw[k].length))return toast('Nothing to import: everything in this backup already exists here.');
+ const r=await ask('Import preview',[{t:'p',v:`Backup from ${d.exported||'unknown date'}. Will add: ${nw.subjects.length} subjects, ${nw.units.length} units, ${nw.lectures.length} lectures, ${nw.files.length} attachments. ${skipped} items already exist and will be left untouched.`}],'Import');if(!r)return;
+ const files=[];for(const f of nw.files)files.push({id:f.id,lid:f.lid,name:String(f.name),type:String(f.type||''),size:+f.size||0,blob:await (await fetch(f.data)).blob()});
+ const LF=['notes','personal','concepts','formulas','doubts','questions'];
+ nw.lectures.forEach(l=>{LF.forEach(k=>l[k]=clean(l[k]));l.tags=Array.isArray(l.tags)?l.tags.map(String):[]});nw.units.forEach(u=>UF.forEach(([k])=>u[k]=clean(u[k])));
+ const hs=new Set(await keys('settings')),ns=(Array.isArray(d.settings)?d.settings:[]).filter(x=>x&&(x.id=='tt'||x.id=='hw'||x.id=='log')&&Array.isArray(x.items)&&!hs.has(x.id));await txDo([...K,'settings'],t=>{ns.forEach(x=>t.objectStore('settings').put(x));nw.subjects.forEach(x=>t.objectStore('subjects').put(x));nw.units.forEach(x=>t.objectStore('units').put(x));nw.lectures.forEach(x=>t.objectStore('lectures').put(x));files.forEach(x=>t.objectStore('files').put(x))});
+ toast('Import completed.');route()}catch(e){toast('Import failed: '+e.message,1)}}
+/* ---------- actions ---------- */
+acts.menu=()=>document.body.classList.toggle(innerWidth<=800?'sbopen':'nosb');
+acts.focusSearch=()=>$('#q').focus();
+acts.clearQ=()=>{$('#q').value='';go('#/')};
+acts.focus=()=>{document.body.classList.toggle('focus');if(document.body.classList.contains('focus'))toast('Focus mode — press Esc to exit')};
+acts.newSub=async()=>{const r=await ask('New subject',SF());if(!r)return;const o={id:uid(),name:r.name.trim(),desc:r.desc,color:r.color,icon:r.icon,exam:r.exam||'',checklist:[],order:nxt(S.s),created:Date.now(),updated:Date.now()};await put('subjects',o);toast('Subject created');go('#/subject/'+o.id)};
+acts.editSub=async d=>{const s=sub(d.id),r=await ask('Edit subject',SF(s));if(!r)return;Object.assign(s,{name:r.name.trim(),desc:r.desc,color:r.color,icon:r.icon,exam:r.exam||'',updated:Date.now()});await put('subjects',s);route()};
+acts.delSub=async d=>{const s=sub(d.id),nu=S.u.filter(u=>u.sid==s.id).length,nl=S.l.filter(l=>l.sid==s.id).length;if(!await conf(`Delete subject “${s.name}” with ${nu} units, ${nl} lectures and all their attachments? This cannot be undone. Consider exporting a backup first.`))return;await cascade('s',s.id);toast('Subject deleted');go('#/')};
+acts.newUnit=async d=>{if(!S.s.length)return toast('Create a subject first');const f=[{n:'name',l:'Unit name',req:1},{n:'desc',l:'Description (optional)',t:'ta'}];if(!d.id)f.unshift({n:'sid',l:'Subject',t:'sel',o:S.s.map(s=>[s.id,s.name])});
+ const r=await ask('New unit',f);if(!r)return;const sid=d.id||r.sid;await put('units',{id:uid(),sid,name:r.name.trim(),desc:r.desc,order:nxt(S.u.filter(u=>u.sid==sid)),summary:'',revnotes:'',questions:'',created:Date.now(),updated:Date.now()});toast('Unit created');go('#/subject/'+sid)};
+acts.renUnit=async d=>{const u=unit(d.id),r=await ask('Edit unit',[{n:'name',l:'Unit name',v:u.name,req:1},{n:'desc',l:'Description',t:'ta',v:u.desc}]);if(!r)return;u.name=r.name.trim();u.desc=r.desc;await put('units',u);route()};
+acts.delUnit=async d=>{const u=unit(d.id),n=S.l.filter(l=>l.uid==u.id).length;if(!await conf(`Delete unit “${u.name}” and its ${n} lectures with all attachments? This cannot be undone.`))return;await cascade('u',u.id);toast('Unit deleted');route()};
+acts.newLec=async d=>{if(!S.u.length)return toast('Create a unit first');let uidv=d.id;let title;
+ const f=[{n:'title',l:'Lecture title',req:1}];if(!uidv)f.push({n:'uid',l:'Unit',t:'sel',o:by(S.u).map(u=>[u.id,`${sub(u.sid)?.name} › ${u.name}`])});
+ const r=await ask('New lecture',f);if(!r)return;uidv=uidv||r.uid;const u=unit(uidv);const o={id:uid(),uid:uidv,sid:u.sid,title:r.title.trim(),desc:'',order:nxt(S.l.filter(l=>l.uid==uidv)),notes:'',personal:'',concepts:'',formulas:'',doubts:'',questions:'',tags:[],rev:false,nextRev:'',created:Date.now(),updated:Date.now(),opened:0};await put('lectures',o);go('#/lecture/'+o.id)};
+acts.renLec=async d=>{const l=lec(d.id),r=await ask('Rename lecture',[{n:'title',l:'Lecture title',v:l.title,req:1}]);if(!r)return;l.title=r.title.trim();l.updated=Date.now();await put('lectures',l);route()};
+acts.delLec=async d=>{const l=lec(d.id);if(!await conf(`Delete lecture “${l.title}” and its attachments? This cannot be undone.`))return;await cascade('l',l.id);toast('Lecture deleted');route()};
+async function cascade(k,id){let ss=[],us=[],ls=[];
+ if(k=='s'){ss=[id];us=S.u.filter(u=>u.sid==id).map(u=>u.id);ls=S.l.filter(l=>l.sid==id).map(l=>l.id)}else if(k=='u'){us=[id];ls=S.l.filter(l=>l.uid==id).map(l=>l.id)}else ls=[id];
+ let fk=[];for(const l of ls)fk.push(...await rq(db.transaction('files').objectStore('files').index('lid').getAllKeys(l)));
+ await txDo(['subjects','units','lectures','files'],t=>{ss.forEach(i=>t.objectStore('subjects').delete(i));us.forEach(i=>t.objectStore('units').delete(i));ls.forEach(i=>t.objectStore('lectures').delete(i));fk.forEach(i=>t.objectStore('files').delete(i))})}
+acts.mv=async d=>{const k=d.k,a=k=='u'?S.u:S.l,it=a.find(x=>x.id==d.id),sib=by(a.filter(x=>k=='u'?x.sid==it.sid:x.uid==it.uid)),i=sib.indexOf(it),j=i+ +d.d;if(j<0||j>=sib.length)return;
+ sib.splice(i,1);sib.splice(j,0,it);for(let n=0;n<sib.length;n++){sib[n].order=n;await put(k=='u'?'units':'lectures',sib[n])}route()};
+acts.togRev=()=>{if(!cur||cur.store!='lectures')return;const l=cur.obj;l.rev=!l.rev;if(l.rev)l.nextRev=l.nextRev||'';const b=$('#rv');b.className=l.rev?'pr':'';b.textContent=l.rev?'★ Marked for revision':'☆ Mark for revision';touch()};
+acts.revised=async d=>{const l=lec(d.id);l.rev=false;l.lastRevised=Date.now();l.nextRev='';await put('lectures',l);toast('Marked as revised');route()};
+acts.cmd=d=>{if(!document.activeElement?.closest('.ed'))return toast('Click inside an editor first');const[c,v]=d.c.split(':');if(c=='cl')return checklist();if(c=='link')return link();document.execCommand(c,false,v?'<'+v+'>':null);touch()};
+function checklist(){document.execCommand('insertUnorderedList');const n=getSelection().anchorNode,ul=n&&(n.nodeType==1?n:n.parentElement).closest('ul');if(ul){ul.setAttribute('data-cl','');ul.querySelectorAll('li').forEach(li=>li.hasAttribute('data-c')||li.setAttribute('data-c','0'))}touch()}
+async function link(){const sel=getSelection();if(!sel.rangeCount)return;const rg=sel.getRangeAt(0).cloneRange(),ed=document.activeElement;const r=await ask('Insert link',[{n:'url',l:'URL (https://…)',req:1}],'Insert');if(!r)return;
+ if(!/^(https?:\/\/|mailto:)/i.test(r.url.trim()))return toast('Only http, https and mailto links are allowed',1);ed.focus();sel.removeAllRanges();sel.addRange(rg);document.execCommand('createLink',false,r.url.trim());touch()}
+acts.addFile=()=>$('#fi').click();
+async function addFiles(fs){const lid=cur.obj.id;let n=0;for(const f of fs){try{await put('files',{id:uid(),lid,name:f.name,type:f.type,size:f.size,blob:f});n++}catch(e){toast(`Could not store “${f.name}”: ${e.name=='QuotaExceededError'?'storage is full':e.message}`,1)}}if(n){toast(n+' file(s) attached');renderAtt(lid)}}
+acts.dlFile=async d=>{const f=await get('files',d.id);try{await saveFile(f.name,f.blob);toast('Saved')}catch(e){toast(e.code=='declined'?'Download cancelled':e.code=='rejected_extension'?'This file type cannot be downloaded from the hosted app':(e.message||'Download failed'),1)}};
+const ckSave=async s=>{s.updated=Date.now();await put('subjects',s);views.subject(s.id)};
+acts.ckAdd=async d=>{const s=sub(d.id),r=await ask('Add checklist item',[{n:'t',l:'What do you need to do or bring?',req:1}]);if(!r)return;(s.checklist=s.checklist||[]).push({id:uid(),t:r.t.trim(),d:false});await ckSave(s)};
+acts.ckDel=async d=>{const s=sub(d.s);s.checklist=(s.checklist||[]).filter(i=>i.id!=d.id);await ckSave(s)};
+acts.ckStarter=async d=>{const s=sub(d.id),have=new Set((s.checklist||[]).map(i=>i.t));STARTER.filter(t=>!have.has(t)).forEach(t=>(s.checklist=s.checklist||[]).push({id:uid(),t,d:false}));await ckSave(s);toast('Starter checklist added')};
+views.timetable=()=>{const td=new Date().getDay(),days=[1,2,3,4,5,6,0].filter(k=>(k>0&&k<6)||TT.items.some(i=>i.d==k));
+ V.innerHTML=`<div class="row"><h1>Timetable</h1><span class="sp"></span><button class="pr" data-a="ttForm">+ Add class</button><button data-a="mkSubs" title="Create a subject for each course in the timetable">Create subjects from timetable</button></div><small class="m">Slots A, C, D, F, G are already mapped to course names. Edit anything that is wrong.</small>`+days.map(k=>`<div class="card"${k==td?' style="border-color:var(--a)"':''}><b>${DN[k]}</b>${k==td?' <span class="tag">Today</span>':''}${TT.items.filter(i=>i.d==k).sort((a,b)=>a.s<b.s?-1:1).map(i=>`<div class="row"><small class="m" style="min-width:104px">${esc(i.s)}–${esc(i.e)}</small><span style="flex:1">${esc(i.t)} <small class="m">${esc(i.code)}</small></span><button class="ic" data-a="ttForm" data-id="${i.id}" aria-label="Edit class" title="Edit class">✎</button><button class="ic dg" data-a="ttDel" data-id="${i.id}" aria-label="Delete class" title="Delete class">🗑</button></div>`).join('')||'<div><small class="m">No classes</small></div>'}</div>`).join('')};
+views.homework=()=>{const p=HW.items.filter(h=>!h.done).sort((a,b)=>a.due<b.due?-1:1),d=HW.items.filter(h=>h.done);
+ V.innerHTML=`<div class="row"><h1>Homework</h1><span class="sp"></span><button class="pr" data-a="hwAdd">+ Add homework</button></div>${p.length?p.map(hwRow).join(''):'<div class="empty">No pending homework. Add what you are given so you never forget it.</div>'}${d.length?`<details><summary>Completed (${d.length})</summary>${d.map(hwRow).join('')}<button class="dg" data-a="hwClear">Remove completed</button></details>`:''}`};
+const ttSave=async()=>{await put('settings',TT);views.timetable()};
+const hwSave=async()=>{await put('settings',HW);side();location.hash.startsWith('#/homework')?views.homework():route()};
+acts.ttForm=async d=>{const i=(d.id&&TT.items.find(x=>x.id==d.id))||{d:1,s:'09:00',e:'09:55',t:'',code:''};const r=await ask(d.id?'Edit class':'Add class',[{n:'d',l:'Day',t:'sel',o:DN.map((n,k)=>[k,n]),v:i.d},{n:'s',l:'Start',type:'time',v:i.s,req:1},{n:'e',l:'End',type:'time',v:i.e,req:1},{n:'t',l:'Class / subject',v:i.t,req:1},{n:'code',l:'Course code (optional)',v:i.code}]);if(!r)return;Object.assign(i,{d:+r.d,s:r.s,e:r.e,t:r.t.trim(),code:r.code.trim()});if(!d.id){i.id=uid();TT.items.push(i)}await ttSave()};
+acts.ttDel=async d=>{if(!await conf('Delete this class from the timetable?'))return;TT.items=TT.items.filter(i=>i.id!=d.id);await ttSave()};
+acts.mkSubs=async()=>{const names=Object.values(CRS).map(c=>c[0]),have=new Set(S.s.map(s=>s.name.toLowerCase())),nw=names.filter(n=>!have.has(n.toLowerCase()));if(!nw.length)return toast('All subjects from your timetable already exist');if(!await ask('Create subjects',[{t:'p',v:'Create these subjects: '+nw.join(', ')+'?'}],'Create'))return;let o=nxt(S.s);for(const n of nw){await put('subjects',{id:uid(),name:n,desc:'',color:COLORS[o%6][0],icon:'',exam:'',checklist:[],order:o,created:Date.now(),updated:Date.now()});o++}toast(nw.length+' subjects created');route()};
+acts.hwAdd=async()=>{const r=await ask('Add homework',[{n:'t',l:'Homework',req:1},{n:'sid',l:'Subject',t:'sel',o:[['','General'],...by(S.s).map(s=>[s.id,s.name])]},{n:'due',l:'Due date',type:'date',req:1}]);if(!r)return;HW.items.push({id:uid(),t:r.t.trim(),sid:r.sid,due:r.due,done:false});await hwSave()};
+acts.hwDel=async d=>{HW.items=HW.items.filter(h=>h.id!=d.id);await hwSave()};
+acts.hwClear=async()=>{if(!await conf('Remove all completed homework?','Remove'))return;HW.items=HW.items.filter(h=>!h.done);await hwSave()};
+acts.rmFile=async d=>{if(!await conf('Remove this attachment from the lecture?','Remove'))return;await del('files',d.id);renderAtt(cur.obj.id)};
+acts.persist=async()=>{if(!navigator.storage?.persist)return toast('Not supported by this browser',1);toast(await navigator.storage.persist()?'Persistent storage granted':'The browser declined persistent storage',0)};
+acts.clearAll=async()=>{const r=await ask('Clear all data',[{t:'p',v:'This permanently deletes every subject, unit, lecture and attachment on this device. Export a backup first if you might need anything. Type DELETE to confirm.'},{n:'c',l:'Confirmation',req:1}],'Clear everything',true);if(!r)return;
+ if(r.c.trim()!='DELETE')return toast('Confirmation text did not match — nothing was deleted',1);await txDo(['subjects','units','lectures','files','settings'],t=>{['subjects','units','lectures','files'].forEach(s=>t.objectStore(s).clear());t.objectStore('settings').put({id:'tt',items:[]});t.objectStore('settings').put({id:'hw',items:[]});t.objectStore('settings').put({id:'log',items:[]})});toast('All data cleared');route()};
+/* ---------- events ---------- */
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const f=acts[b.dataset.a];if(f){e.preventDefault();Promise.resolve(f(b.dataset,b)).catch(err=>{console.error(err);toast(err.message||'Action failed',1)})}});
+document.addEventListener('mousedown',e=>{if(e.target.closest('.tb button'))e.preventDefault()});
+V.addEventListener('input',e=>{if(e.target.matches('.ed,#ti,#tg'))touch()});
+V.addEventListener('paste',e=>{if(!e.target.closest('.ed'))return;e.preventDefault();const h=e.clipboardData.getData('text/html'),t=e.clipboardData.getData('text/plain');document.execCommand('insertHTML',false,h?clean(h):esc(t).replace(/\n/g,'<br>'));touch()});
+V.addEventListener('click',e=>{const li=e.target.closest&&e.target.closest('li[data-c]');if(li&&li.closest('.ed')&&e.target===li&&e.offsetX<28){li.setAttribute('data-c',li.getAttribute('data-c')=='1'?'0':'1');touch()}});
+V.addEventListener('change',e=>{const t=e.target;
+ if(t.id=='fi'&&t.files.length){addFiles([...t.files]);t.value=''}
+ else if(t.id=='bi'&&t.files[0]){importB(t.files[0]);t.value=''}
+ else if(t.dataset.rf){R[t.dataset.rf]=t.value;if(t.dataset.rf=='s')R.u='';views.revision()}
+ else if(t.dataset.hw){const h=HW.items.find(x=>x.id==t.dataset.hw);if(h){h.done=t.checked;hwSave().catch(()=>toast('Could not save homework',1))}}
+ else if(t.dataset.ck){const s=sub(t.dataset.s),i=(s.checklist||[]).find(x=>x.id==t.dataset.ck);if(i){i.d=t.checked;ckSave(s).catch(()=>toast('Could not save checklist',1))}}
+ else if(t.dataset.nr){const l=lec(t.dataset.nr);l.nextRev=t.value;put('lectures',l).then(()=>toast('Next revision date saved')).catch(()=>toast('Could not save date',1))}
+ else if(t.dataset.p){P[t.dataset.p]=t.value;put('settings',P).then(applyP).catch(()=>toast('Could not save setting',1))}});
+document.addEventListener('keydown',e=>{if(e.key=='Escape')document.body.classList.remove('focus','sbopen')});
+let qt;$('#q').addEventListener('input',e=>{clearTimeout(qt);qt=setTimeout(()=>{const v=e.target.value.trim();go(v?'#/search/'+encodeURIComponent(v):'#/')},250)});
+$('#q').addEventListener('keydown',e=>{if(e.key=='Enter'){clearTimeout(qt);const v=e.target.value.trim();go(v?'#/search/'+encodeURIComponent(v):'#/')}});
+/* ---------- start ---------- */
+(async()=>{try{db=await openDB()}catch(e){V.innerHTML=`<div class="empty">Local storage (IndexedDB) is unavailable: ${esc(e.message)}.<br>Private/incognito mode or restrictive browser settings can cause this. Urme cannot save notes without it.</div>`;return}
+ addEventListener('hashchange',route);route()})();
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script></body></html>
